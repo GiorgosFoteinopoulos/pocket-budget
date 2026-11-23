@@ -78,3 +78,40 @@ th {
     text-align: right;
     white-space: nowrap;
 }
+
+.transaction-form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.transaction-form input,
+.transaction-form select,
+.transaction-form button {
+    padding: 8px 10px;
+    border: 1px solid #c1c7d0;
+    border-radius: 6px;
+    font: inherit;
+}
+
+#description {
+    flex: 1;
+}
+
+#amount {
+    width: 110px;
+}
+
+.transaction-form button {
+    background: #0c66e4;
+    border-color: #0c66e4;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.form-error {
+    min-height: 20px;
+    margin: 0 0 12px;
+    color: #bf2600;
+    font-size: 14px;
+}

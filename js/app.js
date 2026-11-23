@@ -1,4 +1,3 @@
-const appName = 'Pocket Budget';
 const currency = 'EUR';
 
 const transactions = [
@@ -6,7 +5,8 @@ const transactions = [
     { description: 'Rent', amount: -450, date: '2026-11-02' },
     { description: 'Groceries', amount: -62.40, date: '2026-11-05' },
     { description: 'Freelance job', amount: 300, date: '2026-11-12' },
-    { description: 'Electricity bill', amount: -58.90, date: '2026-11-15' }
+    { description: 'Electricity bill', amount: -58.90, date: '2026-11-15' },
+    { description: 'Coffee', amount: -3.20, date: '2026-11-20' }
 ];
 
 function formatMoney(amount) {
@@ -21,11 +21,6 @@ function formatSigned(amount) {
     }
 }
 
-function printTransactions(list) {
-    for (const transaction of list) {
-        console.log(`${transaction.date} ${transaction.description.padEnd(18)} ${formatSigned(transaction.amount)}`);
-    }
-}
 
 function summarize(list) {
     let income = 0;
@@ -78,12 +73,67 @@ function renderTotals(summary) {
     incomeLabel.textContent = formatMoney(summary.income);
     expensesLabel.textContent = formatMoney(Math.abs(summary.expenses));
     balanceLabel.textContent = formatMoney(summary.balance);
+
+    if (summary.balance < 0) {
+        balanceLabel.className = 'value expense';
+    } else {
+        balanceLabel.className = 'value income';
+    }
 }
 
-transactions.push({ description: 'Coffee', amount: -3.20, date: '2026-11-20'  });
+function renderAll() {
+    renderTable(transactions);
+    renderTotals(summarize(transactions));
+    document.getElementById('summary').textContent = `${transactions.length} transactions`;
+}
 
-renderTable(transactions);
-renderTotals(summarize(transactions));
 
-document.getElementById('summary').textContent = `${transactions.length} transactions in November`;
+const form = document.getElementById('transaction-form');
+const descriptionInput = document.getElementById('description');
+const amountInput = document.getElementById('amount');
+const typeSelect = document.getElementById('type');
+const dateInput = document.getElementById('date');
+const formError = document.getElementById('form-error');
 
+function showError(text) {
+    formError.textContent = text;
+}
+
+
+function handleSubmit(event) {
+    event.preventDefault();
+
+    const description = descriptionInput.value.trim();
+    const amount = Number(amountInput.value);
+    const type = typeSelect.value;
+    const date = dateInput.value;
+
+    if (description === '') {
+        showError('Please write a description.');
+        return;
+    }
+    if (Number.isNaN(amount) || amount <= 0) {
+        showError('Please enter an amount greater than 0.');
+        return;
+    }
+    if (date === '') {
+        showError('Please pick a date.');
+        return;
+    }
+
+    let signedAmount = amount;
+    if (type === 'expense') {
+        signedAmount = -amount;
+    }
+
+    transactions.push({ description: description, amount: signedAmount, date: date });
+    renderAll();
+
+    showError('');
+    form.reset();
+    dateInput.value = date;
+    descriptionInput.focus();
+}
+
+form.addEventListener('submit', handleSubmit);
+renderAll();

@@ -27,6 +27,18 @@
     </div>
 </section>
 
+    <form id="transaction-form" class="transaction-form">
+        <input id="description" type="text" placeholder="Description" autocomplete="off">
+        <input id="amount" type="number" step="0.01" placeholder="Amount">
+        <select id="type">
+            <option value="expense">Expense</option>
+            <option value="income">Income</option>
+        </select>
+        <input id="date" type="date">
+        <button type="submit">Add</button>
+    </form>
+    <p id="form-error" class="form-error"></p>
+
 <table class="transactions">
     <thead>
     <tr>
