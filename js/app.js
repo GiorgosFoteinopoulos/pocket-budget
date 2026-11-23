@@ -40,6 +40,16 @@ function summarize(list) {
     return { income: income, expenses: expenses, balance: income + expenses };
 }
 
+function countExpenses(list) {
+    let count = 0;
+    for (const transaction of list) {
+        if (transaction.amount < 0) {
+            count = count + 1;
+        }
+    }
+    return count;
+}
+
 transactions.push({ description: 'Coffee', amount: -3.20, date: '2026-11-20' });
 
 printTransactions(transactions);
