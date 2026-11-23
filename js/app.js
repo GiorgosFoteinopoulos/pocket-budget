@@ -2,7 +2,7 @@ const currency = 'EUR';
 
 // ---------- Data (PB-4) ----------
 
-let transactions = [
+const sampleTransactions = [
     { id: 1, description: 'Salary', amount: 1200, date: '2026-11-01' },
     { id: 2, description: 'Rent', amount: -450, date: '2026-11-02' },
     { id: 3, description: 'Groceries', amount: -62.40, date: '2026-11-05' },
@@ -10,7 +10,40 @@ let transactions = [
     { id: 5, description: 'Electricity bill', amount: -58.90, date: '2026-11-15' },
     { id: 6, description: 'Coffee', amount: -3.20, date: '2026-11-20' }
 ];
-let nextId = 7;
+
+// ---------- Saving in the browser (PB-8) ----------
+
+const STORAGE_KEY = 'pocket-budget.transactions';
+
+function loadTransactions() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === null) {
+        return sampleTransactions.slice();
+    }
+    try {
+        return JSON.parse(saved);
+    } catch (error) {
+        console.warn('Saved data was unreadable, starting from the sample data.', error);
+        return sampleTransactions.slice();
+    }
+}
+
+function saveTransactions() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+}
+
+function findNextId(list) {
+    let highest = 0;
+    for (const transaction of list) {
+        if (transaction.id > highest) {
+            highest = transaction.id;
+        }
+    }
+    return highest + 1;
+}
+
+let transactions = loadTransactions();
+let nextId = findNextId(transactions);
 
 // ---------- Formatting (PB-3) ----------
 
@@ -144,6 +177,7 @@ function handleSubmit(event) {
 
     transactions.push({ id: nextId, description: description, amount: signedAmount, date: date });
     nextId = nextId + 1;
+    saveTransactions();
     renderAll();
 
     showError('');
@@ -188,6 +222,16 @@ function handleRowClick(event) {
     const transaction = transactions.find(t => t.id === id);
     if (confirm(`Delete "${transaction.description}"?`)) {
         transactions = transactions.filter(t => t.id !== id);
+        saveTransactions();
+        renderAll();
+    }
+}
+
+function handleReset() {
+    if (confirm('Delete all your transactions and go back to the sample data?')) {
+        localStorage.removeItem(STORAGE_KEY);
+        transactions = sampleTransactions.slice();
+        nextId = findNextId(transactions);
         renderAll();
     }
 }
@@ -197,4 +241,5 @@ function handleRowClick(event) {
 form.addEventListener('submit', handleSubmit);
 filtersBox.addEventListener('click', handleFilterClick);
 rowsBody.addEventListener('click', handleRowClick);
+document.getElementById('reset-button').addEventListener('click', handleReset);
 renderAll();
