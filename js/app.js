@@ -40,26 +40,50 @@ function summarize(list) {
     return { income: income, expenses: expenses, balance: income + expenses };
 }
 
-function countExpenses(list) {
-    let count = 0;
-    for (const transaction of list) {
-        if (transaction.amount < 0) {
-            count = count + 1;
-        }
+const rowsBody = document.getElementById('transaction-rows');
+const incomeLabel = document.getElementById('total-income');
+const expensesLabel = document.getElementById('total-expenses');
+const balanceLabel = document.getElementById('total-balance');
+
+
+function createRow(transaction) {
+    const row = document.createElement('tr');
+
+    const dateCell = document.createElement('td');
+    dateCell.textContent = transaction.date;
+
+    const descriptionCell = document.createElement('td');
+    descriptionCell.textContent = transaction.description;
+
+    const amountCell = document.createElement('td');
+    amountCell.textContent = formatSigned(transaction.amount);
+    if (transaction.amount >= 0) {
+        amountCell.className = 'amount income';
+    } else {
+        amountCell.className = 'amount expense';
     }
-    return count;
+
+    row.append(dateCell, descriptionCell, amountCell);
+    return row;
 }
 
-transactions.push({ description: 'Coffee', amount: -3.20, date: '2026-11-20' });
+function renderTable(list) {
+    rowsBody.replaceChildren();
+    for (const transaction of list) {
+        rowsBody.append(createRow(transaction));
+    }
+}
 
-printTransactions(transactions);
+function renderTotals(summary) {
+    incomeLabel.textContent = formatMoney(summary.income);
+    expensesLabel.textContent = formatMoney(Math.abs(summary.expenses));
+    balanceLabel.textContent = formatMoney(summary.balance);
+}
 
-const summary = summarize(transactions);
-console.log('Income: ', formatMoney(summary.income));
-console.log('Expenses:', formatMoney(summary.expenses));
-console.log('Balance: ', formatMoney(summary.balance));
+transactions.push({ description: 'Coffee', amount: -3.20, date: '2026-11-20'  });
 
-const message = `${appName}: ${transactions.length} transactions, balance ${formatMoney(summary.balance)}`;
-console.log(message);
+renderTable(transactions);
+renderTotals(summarize(transactions));
 
-document.getElementById('summary').textContent = message;
+document.getElementById('summary').textContent = `${transactions.length} transactions in November`;
+

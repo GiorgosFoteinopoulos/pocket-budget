@@ -4,10 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pocket Budget</title>
+    <link rel="stylesheet" href="css/styles.css">
     <script src="js/app.js" defer></script>
 </head>
 <body>
+<main class="page">
 <h1>Pocket Budget</h1>
 <p id="summary">Loading...</p>
+
+<section class="totals">
+    <div class="total">
+        <span class="label">Income</span>
+        <span id="total-income" class="value income">0.00 EUR</span>
+    </div>
+    <div class="total">
+        <span class="label">Expenses</span>
+        <span id="total-expenses" class="value expense">0.00 EUR</span>
+    </div>
+    <div class="total">
+        <span class="label">Balance</span>
+        <span id="total-balance" class="value">0.00 EUR</span>
+    </div>
+</section>
+
+<table class="transactions">
+    <thead>
+    <tr>
+        <th>Date</th>
+        <th>Description</th>
+        <th class="amount">Amount</th>
+    </tr>
+    </thead>
+    <tbody id="transaction-rows"></tbody>
+</table>
+</main>
 </body>
 </html>
