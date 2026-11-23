@@ -115,3 +115,35 @@ th {
     color: #bf2600;
     font-size: 14px;
 }
+
+.filters {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.filters button {
+    padding: 6px 14px;
+    border: 1px solid #c1c7d0;
+    border-radius: 16px;
+    background: #ffffff;
+    font: inherit;
+    cursor: pointer;
+}
+
+.filters button.active {
+    background: #172b4d;
+    border-color: #172b4d;
+    color: #ffffff;
+}
+.delete {
+    padding: 2px 8px;
+    border: none;
+    background: transparent;
+    color: #7a869a;
+    cursor: pointer;
+}
+
+.delete:hover {
+    color: #bf2600
+}
