@@ -160,3 +160,39 @@ th {
     font-size: 13px;
     cursor: pointer;
 }
+
+.convert-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    color: #5e6c84;
+    font-size: 14px;
+}
+
+.convert-form select,
+.convert-form button {
+    padding: 6px 10px;
+    border: 1px solid #c1c7d0;
+    border-radius: 6px;
+    background: white;
+    font: inherit;
+}
+
+.convert-form button {
+    cursor: pointer;
+}
+
+.convert-form button:disabled {
+    opacity: 0.5;
+    cursor: wait;
+
+}
+
+.convert-result {
+    color: #172b4d;
+}
+
+.convert-result.error {
+    color: #bf2600;
+}

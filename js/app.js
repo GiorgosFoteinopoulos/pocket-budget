@@ -1,8 +1,8 @@
 const currency = 'EUR';
 
-// ---------- Data (PB-4) ----------
 
-const sampleTransactions = [
+
+let sampleTransactions = [
     { id: 1, description: 'Salary', amount: 1200, date: '2026-11-01' },
     { id: 2, description: 'Rent', amount: -450, date: '2026-11-02' },
     { id: 3, description: 'Groceries', amount: -62.40, date: '2026-11-05' },
@@ -11,7 +11,7 @@ const sampleTransactions = [
     { id: 6, description: 'Coffee', amount: -3.20, date: '2026-11-20' }
 ];
 
-// ---------- Saving in the browser (PB-8) ----------
+
 
 const STORAGE_KEY = 'pocket-budget.transactions';
 
@@ -45,7 +45,7 @@ function findNextId(list) {
 let transactions = loadTransactions();
 let nextId = findNextId(transactions);
 
-// ---------- Formatting (PB-3) ----------
+
 
 function formatMoney(amount) {
     return `${amount.toFixed(2)} ${currency}`;
@@ -59,7 +59,7 @@ function formatSigned(amount) {
     }
 }
 
-// ---------- Working with the list (PB-4) ----------
+
 
 function summarize(list) {
     let income = 0;
@@ -74,7 +74,7 @@ function summarize(list) {
     return { income: income, expenses: expenses, balance: income + expenses };
 }
 
-// ---------- Showing it on the page (PB-5) ----------
+
 
 const rowsBody = document.getElementById('transaction-rows');
 const incomeLabel = document.getElementById('total-income');
@@ -136,7 +136,7 @@ function renderAll() {
     document.getElementById('summary').textContent = `Showing ${visible.length} of ${transactions.length} transactions`;
 }
 
-// ---------- Adding from the form (PB-6) ----------
+
 
 const form = document.getElementById('transaction-form');
 const descriptionInput = document.getElementById('description');
@@ -186,7 +186,7 @@ function handleSubmit(event) {
     descriptionInput.focus();
 }
 
-// ---------- Filter, sort, delete (PB-7) ----------
+
 
 const filtersBox = document.querySelector('.filters');
 let currentFilter = 'all';
@@ -236,10 +236,49 @@ function handleReset() {
     }
 }
 
-// ---------- Start ----------
+const RATES_URL = 'https://api.frankfurter.dev/v1/latest';
+
+const convertForm = document.getElementById('convert-form');
+const targetSelect = document.getElementById('target-currency');
+const convertButton = convertForm.querySelector('button');
+const convertResult = document.getElementById('convert-result');
+
+async function fetchRate(target) {
+    const response = await fetch(`${RATES_URL}?base=EUR&symbols=${target}`);
+    if (!response.ok) {
+        throw new Error('the rates service answered ' + response.status);
+    }
+    const data = await response.json();
+    return { rate: data.rates[target], date: data.date };
+}
+
+
+async function handleConvert(event) {
+    event.preventDefault();
+    const target = targetSelect.value;
+    const balance = summarize(transactions).balance;
+
+    convertButton.disabled = true;
+    convertResult.className = 'convert-result';
+    convertResult.textContent = 'Loading the rate...';
+
+    try {
+        const result = await fetchRate(target);
+        const converted = balance * result.rate;
+        convertResult.textContent = `= ${converted.toFixed(2)} ${target} (1 EUR = ${result.rate}
+        ${target}, ${result.date})`;
+    } catch (error) {
+        convertResult.className = 'convert-result-error';
+        convertResult.textContent = 'Could not convert: ' + error.message;
+    } finally {
+        convertButton.disabled = false;
+    }
+}
+
 
 form.addEventListener('submit', handleSubmit);
 filtersBox.addEventListener('click', handleFilterClick);
 rowsBody.addEventListener('click', handleRowClick);
 document.getElementById('reset-button').addEventListener('click', handleReset);
+convertForm.addEventListener('submit', handleConvert);
 renderAll();
